@@ -1,0 +1,240 @@
+# Path to galaxy.yml
+#~/galaxy/groups_vars/galaxy.yml
+---
+- hosts: galaxyservers
+  become: true
+  pre_tasks:
+    - name: Install Dependencies
+      package:
+        name: ['git', 'make', 'python3-psycopg2', 'virtualenv']
+  roles:
+    - galaxyproject.postgresql
+    - role: natefoo.postgresql_objects
+      become: true
+      become_user: postgres
+    - geerlingguy.pip
+    - galaxyproject.galaxy
+    - role: uchida.miniconda
+      become: true
+      become_user: galaxy
+
+
+# Path to galaxyservers.yml
+# ~/galaxy/groups_vars/galaxyservers.yml
+# python3 support
+pip_virtualenv_command: /usr/bin/python3 -m virtualenv # usegalaxy_eu.certbot, usegalaxy_eu.tiaas2, galaxyproject.galaxy
+certbot_virtualenv_package_name: python3-virtualenv    # usegalaxy_eu.certbot
+pip_package: python3-pip                               # geerlingguy.pip
+
+# PostgreSQL
+postgresql_objects_users:
+  - name: galaxy
+postgresql_objects_databases:
+  - name: galaxy
+    owner: galaxy
+
+# Galaxy
+galaxy_create_user: true
+galaxy_separate_privileges: true
+galaxy_manage_paths: true
+galaxy_layout: root-dir
+galaxy_root: /srv/galaxy
+galaxy_user: {name: galaxy, shell: /bin/bash}
+galaxy_commit_id: release_20.01
+galaxy_config_style: yaml
+galaxy_force_checkout: true
+miniconda_prefix: "{{ galaxy_tool_dependency_dir }}/_conda"
+miniconda_version: "4.6.14"
+
+galaxy_config:
+  galaxy:
+    brand: "Avans-ATGM"
+    admin_users: n.mol2@student.avans.nl, dl.vrins@student.avans.nl
+    database_connection: "postgresql:///galaxy?host=/var/run/postgresql"
+    file_path: /data
+    check_migrate_tools: false
+    tool_data_path: "{{ galaxy_mutable_data_dir }}/tool-data"
+  uwsgi:
+    http: 0.0.0.0:8080
+    buffer-size: 16384
+    processes: 1
+    threads: 4
+    offload-threads: 2
+    static-map:
+      - /static/style={{ galaxy_server_dir }}/static/style/blue
+      - /static={{ galaxy_server_dir }}/static
+      - /favicon.ico={{ galaxy_server_dir }}/static/favicon.ico
+    static-safe: client/galaxy/images
+    master: true
+    virtualenv: "{{ galaxy_venv_dir }}"
+    pythonpath: "{{ galaxy_server_dir }}/lib"
+    module: galaxy.webapps.galaxy.buildapp:uwsgi_app()
+    thunder-lock: true
+    die-on-term: true
+    hook-master-start:
+      - unix_signal:2 gracefully_kill_them_all
+      - unix_signal:15 gracefully_kill_them_all
+    py-call-osafterfork: true
+    enable-threads: true
+    mule:
+      - lib/galaxy/main.py
+      - lib/galaxy/main.py
+    farm: job-handlers:1,2
+
+
+# Path to layout.yml
+# ~//galaxy/groups_vars/roles/galaxyproject.galaxy/tasks/layout.yml
+---
+# Configure any unset variables using layout defaults
+
+- name: Include layout vars
+  include_vars: "layout-{{ galaxy_layout | default('legacy') }}.yml"
+
+- name: Set any unset variables from layout defaults
+  set_fact:
+    "{{ item }}": "{{ lookup('vars', '__' ~ item) }}"
+
+  when: item not in vars
+  with_items:
+    - galaxy_venv_dir
+    - galaxy_server_dir
+    - galaxy_config_dir
+    - galaxy_mutable_data_dir
+    - galaxy_mutable_config_dir
+    - galaxy_shed_tools_dir
+    - galaxy_cache_dir
+    - galaxy_local_tools_dir
+
+- name: Check that any explicitly set Galaxy config options match the values of explicitly set variables
+  assert:
+    that:
+      - lookup('vars', 'galaxy_' ~ item) == galaxy_config[galaxy_app_config_section][item]
+    msg: "Value of '{{ 'galaxy_' ~ item }}' does not match value of '{{ item }}' in galaxy_config: {{ lookup('vars', 'galaxy_' ~ item) }} != {{ galaxy_config[galaxy_app_config_section][item] }}"
+    # TODO: requires Ansible 2.7
+    #success_msg: "Value of '{{ 'galaxy_' ~ item }}' matches galaxy_config value of '{{ item }}' in galaxy_config"
+  when: "'galaxy_' ~ item in vars and item in ((galaxy_config | default({}))[galaxy_app_config_section] | default({}))"
+  with_items:
+    - tool_dependency_dir
+    - file_path
+    - job_working_directory
+    - shed_tool_config_file
+
+- name: Set any unset variables corresponding to Galaxy config options from galaxy_config or layout defaults
+  set_fact:
+    "{{ 'galaxy_' ~ item }}": "{{ ((galaxy_config | default({}))[galaxy_app_config_section] | default({}))[item] | default(lookup('vars', '__galaxy_' ~ item)) }}"
+  when: "'galaxy_' ~ item not in vars"
+  with_items:
+    - tool_dependency_dir
+    - file_path
+    - job_working_directory
+
+# The error we received after running playbook: galaxy.yml
+ubuntu@packer-Ubuntu-18:~/galaxy/group_vars$ ansible-playbook galaxy.yml
+
+PLAY [galaxyservers] **********************************************************************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] ********************************************************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [Install Dependencies] ***************************************************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : include_tasks] *******************************************************************************************************************************************************************************************************************************
+included: /home/ubuntu/galaxy/group_vars/roles/galaxyproject.postgresql/tasks/debian.yml for 145.100.59.212
+
+TASK [galaxyproject.postgresql : Install pgdg package signing key (Debian/pgdg)] **********************************************************************************************************************************************************************************************
+skipping: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Install pgdg repository (Debian/pgdg)] *******************************************************************************************************************************************************************************************************
+skipping: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Install PostgreSQL (Debian)] *****************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Get installed version] ***********************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Set version fact] ****************************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Set version fact] ****************************************************************************************************************************************************************************************************************************
+skipping: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Set OS-specific variables] *******************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Set pgdata fact] *****************************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Set conf dir fact] ***************************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : include_tasks] *******************************************************************************************************************************************************************************************************************************
+skipping: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Create conf.d] *******************************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Check for conf.d include in postgresql.conf] *************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Set conf.d include in postgresql.conf] *******************************************************************************************************************************************************************************************************
+skipping: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Include 25ansible_postgresql.conf in postgresql.conf] ****************************************************************************************************************************************************************************************
+skipping: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Set config options] **************************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Install pg_hba.conf] *************************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : include_tasks] *******************************************************************************************************************************************************************************************************************************
+skipping: [145.100.59.212]
+
+TASK [galaxyproject.postgresql : Ensure PostgreSQL is running] ****************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [natefoo.postgresql_objects : Revoke extra privileges] *******************************************************************************************************************************************************************************************************************
+
+TASK [natefoo.postgresql_objects : Drop databases] ****************************************************************************************************************************************************************************************************************************
+
+TASK [natefoo.postgresql_objects : Create and drop users] *********************************************************************************************************************************************************************************************************************
+
+TASK [natefoo.postgresql_objects : Create groups] *****************************************************************************************************************************************************************************************************************************
+
+TASK [natefoo.postgresql_objects : Add or remove users from groups] ***********************************************************************************************************************************************************************************************************
+
+TASK [natefoo.postgresql_objects : Drop groups] *******************************************************************************************************************************************************************************************************************************
+
+TASK [natefoo.postgresql_objects : Create databases] **************************************************************************************************************************************************************************************************************************
+
+TASK [natefoo.postgresql_objects : Grant user database privileges] ************************************************************************************************************************************************************************************************************
+
+TASK [natefoo.postgresql_objects : Grant extra privileges] ********************************************************************************************************************************************************************************************************************
+
+TASK [geerlingguy.pip : Ensure Pip is installed.] *****************************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [geerlingguy.pip : Ensure pip_install_packages are installed.] ***********************************************************************************************************************************************************************************************************
+
+TASK [galaxyproject.galaxy : Ensure that mutually exclusive options are not set] **********************************************************************************************************************************************************************************************
+ok: [145.100.59.212] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [galaxyproject.galaxy : Set privilege separation default variables] ******************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.galaxy : Include layout vars] *****************************************************************************************************************************************************************************************************************************
+ok: [145.100.59.212]
+
+TASK [galaxyproject.galaxy : Set any unset variables from layout defaults] ****************************************************************************************************************************************************************************************************
+fatal: [145.100.59.212]: FAILED! => {"msg": "The task includes an option with an undefined variable. The error was: 'galaxy_server_dir' is undefined\n\nThe error appears to be in '/home/ubuntu/galaxy/group_vars/roles/galaxyproject.galaxy/tasks/layout.yml': line 7, column 3, but may\nbe elsewhere in the file depending on the exact syntax problem.\n\nThe offending line appears to be:\n\n\n- name: Set any unset variables from layout defaults\n  ^ here\n"}
+
+PLAY RECAP ********************************************************************************************************************************************************************************************************************************************************************
+145.100.59.212             : ok=18   changed=0    unreachable=0    failed=1    skipped=17   rescued=0    ignored=0
+
+
