@@ -1,0 +1,1051 @@
+# Galaxy
+
+### Connection details
+Server: ``ssh ubuntu@145.100.59.102``\
+Website: http://145.100.59.102:8080
+
+### Start server
+Login  
+``$ ssh ubuntu@145.100.59.102``\
+``$ Screen``\
+press enter\
+``$ sh run.sh``
+
+### Stop server
+CTRL+C\
+CTRL+D\
+CTRL+D
+
+### how to close the screen and server keeps running
+wanna work on the server and still let it run?.\
+still wanna logout?\
+CTRL+A and then CTRL+D\
+now are you again in the server terminal\
+by presisng CTRL-D or `` $ logout``.
+
+----------------------------------------------------------------------------------------------
+
+## SSH Keys
+##### TLDR
+##### this is required for creating VM and also let co-workers work on the same VM
+#### Source
+https://doc.hpccloud.surfsara.nl/SSHkey  
+https://doc.hpccloud.surfsara.nl/general-start
+
+#### Check if there is a SSH key:
+``$ ls -l ~/.ssh/``
+
+#### make an public and private SSH-key
+
+~Ssh-key~\
+~- write down where to safe~\
+~#never share keyphrase. Also the thing will be saved into the pc so you will probably never need it again~\
+~- write long phrase (35 characters)~
+
+#### using SSH agent
+``$ ssh-agent remember ssh-key``\
+``$ eval 'ssh-agent -s'``\
+``$ shh-add ~/#naamfile `` where SSH-key will be safed/ or  ``$ ssh-add ~/.ssh/id_rsa``
+	
+#### check if the SSH key exist
+``$ ssh-keygen ``
+ - press enter like your life depends on it
+ - **NO PASSWORD!**  or you would get an error in surfsara
+	
+``ssh-add -l``
+	
+cat ~/plaats\
+nano /home/gebruiker/.ssh/authorized_keys
+
+---------------------------------------------------------------------------------------------------------
+
+
+
+## 1. SurfSara
+#### TLDR
+this is part of the MARKDOWN is everything noted on how to manage the following on the UI of Surfsara
+
+- Creating a server/vm
+- creating exstra datadisk and how to attach / mount it on the VM
+- Resising the OS image
+
+#### Sources
+https://docs.galaxyproject.org/en/latest/admin/config.html  
+https://askubuntu.com/questions/393463/create-the-home-directory-while-creating-a-user
+### make a VM on Surfsara *server
+
+User view. Stage tab -> APPS
+
+Build a template
+- Apps
+- Ubuntu 16.04 server
+- 104 local image ssd kiezen
+- choose a name and create
+	
+Build a VM
+- Instances
+- Groen knopje
+- Aanklikken als persistent
+- Memory 4 GB
+- Naam invullen
+
+IP = 145.100.58.63
+
+### Add other SSH-keys
+
+``$ ssh ubuntu@145.100.58.63``\
+``$ nano /home/ubuntu/.ssh/authorized_keys``
+ 
+ add the key of co-workers in this document
+
+### working on the galaxy user
+su - galaxy_user
+password = hogeschoolAvans
+
+### Data blocks uploaden
+
+#### Sources
+https://doc.hpccloud.surfsara.nl/create-datablocks  
+https://help.ubuntu.com/community/Fstab
+
+#### make an empty data disk
+ - Go to surfsara
+ - Images and storage
+ - Image create image
+ 	- Give it a name
+ 	- Type = generic storage datablock
+ 	- Datastore = 106: ceptj
+ 	- Set to persistant
+ 	- Image location = empty disk image
+ 	- Size = in mb
+
+#### Add data disk to the template
+- VMS
+ - Template
+ - Update
+ - Storage
+	-  green + button
+	-  Output data image, select created data storage
+	 
+#### Mount data disk to template
+ - Log in on server
+ - ``$ sudo su -``
+ - ``$ Mkdir /data``
+ - ``$ Mkfs -t xfs /dev/vdb``
+ - ``$ Mount /dev/vdb /data``
+	- ``$ sudo blkid = lijst van alle data mounts``
+		
+#### Automating of mounting data image
+ - ``$ nano /etc/fstab``
+ - Write in latest line: ``/dev/vdb /data xfs defaults 0 0``
+ 
+#### check use of images
+``$ sudo su - `` 
+``$ df -h ``
+ 
+ 
+### Resizing of OS image
+This is needed becouse the VM and Template will get a critical failure due the required OS for Galaxy  
+is around 6Gb and has only 2 GB. with the critical failure the template needs to be destroyed and all progress is lost
+
+##### Sources
+https://doc.hpccloud.surfsara.nl/resize_os_image
+
+#### Preparing the image for resizing
+- Click on the image you want to resize or dowload a new one
+- Click on the VM tab to see wich vms use them
+- Shut those VM's Down (Power-off, terminate or undeploy)
+- make a backup with clone
+- go to Info, set the OS image to type Datablock and non-persisent
+
+#### Creating the Utility VM
+- get from the appstore a new VM tempale (ubuntu 18.04 desktop)
+- edit the template	
+- - make sure that NIC is connected to the internet
+- - include the DISK with the image that need to be resized
+- save the changes
+- clcik on iniate
+- - name the VM
+- - Give a new Size to the OS
+- -  **NOTE! this must be greater then 15 gb or else the vm will go into failure. it worked for us when we used 45 gb**
+
+#### Resizing and repartitioning o the image
+- log in into the VM
+- - password is ubuntu
+- - new password := hogeschoolAvans
+- install Gparted "sudo apt-get install gparted
+- close the screen
+- log into the VM with the Surfsara UI
+- Loging with the new created password
+- search for gparted program, and start it
+- in g parted click on the OS image you want to resize
+- remove linux-swap and extended partition
+- click on ext4 and click on expand,
+- - install free space on 512
+- - fill up the rest of unallocated disk image to ext4
+- click on the un allocated
+- - create new, extended partition and then Add
+- - click again on unallocated and then linux swap partition and click on add
+- click on apply all
+
+### saving the resized OS image
+
+- click on PowerOFF 
+- click on the resized image and then safe as
+- change the OS image to persistant and data type OS (do this for the saved as)
+
+### installing new OS image
+
+- update VM template
+- remove first OS image and add the resized OS image
+- click onsafe
+- Iniate VM
+
+
+
+---------------------------------------------------------------------------------------------------------
+## 2. VM
+#### Sources
+https://doc.hpccloud.surfsara.nl/general-start  
+https://doc.hpccloud.surfsara.nl/SSHkey  
+
+Generate a private/public key pair:
+https://galaxyproject.org/admin/get-galaxy/#for-production-or-single-user  
+
+#### VM aanmaken
+Maak een VM aan op basis van een template op de store.
+Bij het aanmaken van de VM het vinkje bij "Instantiate as persistent" zetten zodat onze server blijft bestaan.
+Zet het geheugen (RAM) van de server op 4G, anders gaat yarn crashen omdat hij niet genoeg heeft bij de installatie.
+
+Installeer git om met repos te kunnen werken\
+``sudo apt-get install git``
+
+---------------------------------------------------------------------------------------------------------
+# 3. Galaxy
+
+### TLDR
+this is the most basic way to make an galaxy server. it is highly suggested to move to point 5 of Ansible Galaxy
+
+### Install galaxt
+#### sources
+https://galaxyproject.org/admin/get-galaxy/#for-production-or-single-user  
+https://doc.hpccloud.surfsara.nl/create-datablocks
+https://hostadvice.com/how-to/how-to-create-a-non-root-user-on-ubuntu-18-04-server/
+
+``$ ssh ubuntu@<IP ADRESS>``
+
+#### Create a non-root home user
+
+``$ sudo adduser <Galaxy-user>``
+
+
+``$ sudo usermod -aG sudo Galaxy-user``
+
+#### Galaxy installeren
+
+
+`` $ sudo su - galaxy_user``
+
+``$ sudo apt-get install git``\
+
+CD to the user you made
+
+'' $ cd /data-galaxy
+``$ git clone -b release_20.01 https://github.com/galaxyproject/galaxy.git``
+
+#### Nieuwe galaxy
+``$ git clone -b release_20.01 https://github.com/galaxyproject/galaxy.git``\
+
+Ingeval van updating existing:\
+``$ git fetch origin && git checkout release_20.01 && git pull --ff-only origin release_20.01``
+
+Pull de repo van galaxy en installeer hem door ``sh run.sh`` runnen in de galaxy folder (``cd galaxy && sh run.sh``).\
+Gebruik CTRL+C om de server weer te stoppen.
+
+#### Maak een config aan waar je in kan werken
+cp config/galaxy.yml.sample config/galaxy.yml
+
+Pas de configuratie van galaxy aan zodat wij als admin in kunnen loggen sen ook vanaf het internet erbij kunnen.
+
+Verander de interface binding naar het externe IP van de server.\
+``nano galaxy/config/galaxy.yml``
+
+>  The address and port on which to listen.  By default, only listen to\
+  localhost (galaxy will not be accessible over the network).  Use\
+  ':8080' to listen on all available network interfaces.\
+  http: 145.100.59.102:8080 (VERANDER DEZE)
+>
+>  Administrative users - set this to a comma-separated list of valid\
+  Galaxy users (email addresses).  These users will have access to the\
+  Admin section of the server, and will have access to create users,\
+  groups, roles, libraries, and more.  For more information, see:\
+  https://galaxyproject.org/admin/  
+  admin_users: 'ubuntu@localhost' (VERANDER DEZE)
+
+Zet de firewall open op poort 8080
+``sudo ufw allow 8080``
+
+
+### configure the loggings
+#### sources
+https://docs.galaxyproject.org/en/latest/admin/config_logging.html
+https://docs.python.org/3/library/logging.html#logging-levels
+
+nano galaxy.yml 
+set log_level = WARNING
+
+type in shell: GALAXY_LOG=~/galaxy/logfile
+
+everything will be writed there when galaxy is started with sh run.sh daemon
+
+### Disable the developers settings
+#### sources
+https://docs.galaxyproject.org/en/latest/admin/production.html
+
+
+
+nano config/galaxy
+
+debug:false
+filter-with: gzip
+cleanup_jobs: onsucces or never needs to be discussed
+
+### Proxy with Apache
+#### Sources
+https://docs.galaxyproject.org/en/release_18.09/admin/apache.html
+https://docs.galaxyproject.org/en/release_20.01/admin/proxy_package_layout.html
+https://ssl-config.mozilla.org/#server=apache&version=2.4.41&config=intermediate&openssl=1.1.1d&guideline=5.4
+https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices
+https://docs.galaxyproject.org/en/release_20.01/admin/proxy_package_layout.html
+https://certbot.eff.org/instructions
+
+set HTTP (TCP port 80) & HTTPS(TCP port 443 ) open
+sudo ufw status verbose
+
+
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+
+apt-get install apache2 libapache2-mod-proxy-uwsgi
+
+stops apache2
+sudo /etc/init.d/apache2 stop
+sudo /etc/init.d/apache2 restart
+
+ sudo a2enmod headers deflate expires rewrite proxy proxy_uwsgi
+
+#to get security upfated from OS
+sudo apt install aptitide
+
+cd /etc/apache2
+To enable mods or disable run
+Sudo a2enmod to enable
+sudo a2dismod to disable
+
+#mods required to enable
+- rewrite
+- proxy
+- proxy_uwsgi
+- ssl
+- deflate
+- expires
+
+
+disable the following:
+- proxyrequest
+- proxyVia
+
+### Basic configurations
+Sudo apt-get update
+sudo apt-get install software-properties-common
+sudo add-apt-respository universe
+sudo add-apt repository
+pp:certbot/certbor
+sudo apt-get update
+
+sudo apt-get install certbot python-certbot-apache
+
+
+sudo certbot --apache
+
+###########################################
+### doesnt work domain name not defined####
+###########################################
+
+
+### global configurations
+
+sudo nano /etc/apache2/conf-available/galaxy.conf
+"	"SSLProtocol             all -SSLv3
+SSLCipherSuite          ...
+#...
+"
+sudo nano /etc/apache2/site-available/galaxy.conf
+
+<VirtualHost _default_:80>
+    Redirect permanent / https://galaxy.example.org
+</VirtualHost>
+
+<VirtualHost _default_:443>
+    SSLEngine on
+    SSLCertificateFile      /etc/apache2/ssl/server.crt
+    SSLCertificateKeyFile   /etc/apache2/ssl/server.key
+    #...
+</VirtualHost>
+
+"
+a2enconf galaxy
+a2ensite galaxy
+
+### SSL enabled
+
+
+
+
+
+### Connecting to a cluster
+####sources
+https://docs.galaxyproject.org/en/latest/admin/cluster.html
+https://docs.galaxyproject.org/en/latest/admin/production.html
+https://docs.galaxyproject.org/en/latest/admin/jobs.html
+https://galaxyproject.github.io/training-material/topics/admin/tutorials/pulsar/tutorial.html
+https://pulsar.readthedocs.io/en/latest/organization.html
+
+#### preparations
+- make a new VM for Pulasar, increase the OS to 20 gb
+- mkdir pulsar
+- sudo apt-get install git
+- git clone https://github.com/galaxyproject/pulsar
+- cd pulsar
+- sudo pip install virtualenv
+- virutalenv .venv
+- . .venv/bin/activate
+
+
+
+
+### Enable FTP upload
+
+#### sources
+- Attach a data disk
+- https://docs.galaxyproject.org/en/latest/admin/special_topics/ftp.html
+- http://proftpd.org/
+https://www.howtoforge.com/how-to-install-proftpd-with-tls-on-ubuntu-1804/
+
+changed in config/galaxy.yml file_path to /root/galaxy_data as datastorage
+
+inside Galaxy_server
+cp -r database /root/galaxy_data (where the disk is installed)
+nano config/galaxy.yml
+	change ftp_upload_dir to /root/galaxy_data
+	
+	NEED TO CHANGE THE FTP UPLOAD SITE
+
+
+Actual installing FTP
+
+sudo apt-get isntall proftpd -y
+find it in the /etc/proftpd folder
+
+
+### To start and restart proftpd 
+sudo systemctl restart proftpd
+sudo systemctl status proftpd
+
+
+check the IP adres
+ip a | egrep "inet"
+sudo ufw allow 21
+
+#adding FTP users
+sudo useradd -m ftp2
+
+change the following in the config file_path
+servername "debian" -> "fairhearth_galaxy"
+
+#### secure the ProFTP with TSL
+
+sudo apt-get install openssl 
+
+Make aan SSL key with the following command:
+openssl req -x509 -newkey rsa:1024 -keyout /etc/ssl/private/proftpd.key -out /etc/ssl/certs/proftpd.crt -nodes -days 365
+- answer the questions
+
+chmod 600 /etc/ssl/private/proftpd.key
+ chmod 600 /etc/ssl/certs/proftpd.crt
+ 
+ nano /etc/proftpd/tls.conf
+  ##change the following lines
+  
+  TLSRSACertificateFile /etc/ssl/certs/proftpd.crt
+TLSRSACertificateKeyFile /etc/ssl/private/proftpd.key
+TLSEngine on
+TLSLog /var/log/proftpd/tls.log
+TLSProtocol SSLv23
+TLSRequired on
+TLSOptions NoCertRequest EnableDiags NoSessionReuseRequired
+TLSVerifyClient off
+
+systemctl restart proftpd
+
+
+Change in config/galaxy.yml
+ftp_Upload_dir = Path to database
+ftp_upload_site = IP
+
+ createuser -SDR galaxyDonny
+ 
+
+
+
+----------------
+
+
+#  4  installing Galaxy by Docker
+
+#### TLDR
+
+this is the docker way of installing galaxy. unfortunatly it is outdated and loads of errors will be meeted and not good configureable.
+it strongly suggested to follow point 5 Ansible Galaxy
+
+#### sources
+
+
+https://github.com/apetkau/galaxy-hackathon-2014
+https://crs4.github.io/Galaxy4Developers/lectures/06.docker_and_galaxy/
+https://docs.docker.com/engine/install/ubuntu/
+
+### installing Docker
+mkdir tools/docker
+cp test/functional/tools/catdocker.xml tools/docker/
+cd config
+cp tool_conf.xml.sample tool_conf.xml
+sudo nano tool_conf.xml
+voeg dit toe:
+" <section>
+    <tool file="docker/catDocker.xml"/>
+  </section>
+  "
+
+cp job_conf.xml.sample_basic job_conf.xml
+sudo nano job_conf.xml
+voeg dit toe :
+	"  <destinations default="docker_local">
+       <destination id="local" runner="local"/>
+       <destination id="docker_local" runner="local">
+         <param id="docker_enabled">true</param>
+       </destination>
+    </destinations>"
+	
+nu docker de rechten geven om docker te runnen zonder wachtwoord
+
+galaxy_user  ALL = (root) NOPASSWD: SETENV: /usr/bin/docker
+
+
+###another try
+
+$ sudo apt-get update
+
+$ sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+	
+	$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo apt-key fingerprint
+to find out which key is needed for docker
+
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+   
+    $ sudo apt-get update
+ $ sudo apt-get install docker-ce docker-ce-cli containerd.io
+ 
+ sudo docker run hello_world to test if it correctly installed
+  
+  
+  
+  
+  
+  ###########################
+  
+  docker exec -it 99a9bbddaf1e bash
+
+docker stop 99a9bbddaf1e
+-----------------------------------------------------------------------------
+#Isengard + Docker
+
+## installing docker
+
+### sources
+https://docs.docker.com/engine/install/debian/
+https://hub.docker.com/r/bgruening/galaxy-stable/#Advanced-Logging
+
+#### create a user first
+sudo adduser <Galaxy-user>
+####### give it sudo rights
+sudo usermod -aG sudo Galaxy-user
+
+
+### installing Docker
+sudo apt-get update
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+	
+#### # docker officiele GPG key binnen halen
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+sudo apt-key fingerprint
+
+#### # key should look like this
+pub   4096R/0EBFCD88 2017-02-22
+      Key fingerprint = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid                  Docker Release (CE deb) <docker@docker.com>
+sub   4096R/F273FCD8 2017-02-22
+
+
+#### # maak een stable respository 
+#### # The Stable channel gives you latest releases for general availability.
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/debian \
+   $(lsb_release -cs) \
+   stable"
+sudo apt install docker.io
+   
+ sudo apt-get update
+ sudo apt-get install docker-ce docker-ce-cli containerd.io
+ 
+ docker run -d -p 8080:80 -p 8021:21 -p 8022:22 bgruening/galaxy-stable
+ 
+ change config files
+ docker run -p 8080:80 -v /data/galaxy-data:/export --name <new_container_name> bgruening/galaxy-stable
+
+###### list of all docker images
+sudo docker images ls
+
+##### list of all active images
+sudo docker ps
+
+#### wokring on the docker image
+run de docker
+sudo docker ps : voor image ID
+sudo docker exec image ID bash
+
+-----------------------------------------------------------------------------------
+# 5 ansible Galaxy
+
+### TLDR
+
+this is the recommend way to install galaxy for a good production. it is adviced by the maintainer of galaxy.org
+## Install Ansible
+
+### Sources
+https://training.galaxyproject.org/training-material/topics/admin/tutorials/ansible/tutorial.html#your-first-playbook-and-first-role
+https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
+
+``$ sudo apt update``\
+``$ sudo apt install software-properties-common``\
+``$ sudo apt-add-repository --yes --update ppa:ansible/ansible``\
+``$ sudo apt install ansible``\
+``$ make deb``\
+``$ mkdir intro || cd intro``
+
+``$ nano my_hosts``
+
+###### add the folowing to my_hosts
+######################
+
+	[my_hosts]
+	localhost ansible_connection=local
+####################
+
+``$ mkdir -p roles/myrole/tasks/``\
+``$ cd roles/myrole/tasks/``\
+``$ nano main.yml``
+
+###### add the following to main.yml
+#################################
+
+	---
+	- name: Copy a file to the remote host
+	copy:
+		src: test.txt
+		dest: /tmp/test.txt
+#########################
+
+``$ mkdir roles/my-role/files``\
+``$ cd roles/my-role/files``\
+``$ nano test.txt``
+#####  add the following to test.txt
+###################
+
+	"hello Galaxy"
+#################
+	
+``$ nano playbook.yml``
+###### put the following in playbook.yml
+
+
+###################
+
+	---
+	- hosts: my_hosts
+		roles:
+			- my-role
+			
+###################
+
+Run playbook
+
+``$ ansible-playbook -i my-host playbook.yml``
+
+### setting up the module
+
+``$ansible -i my_host -m setup my_hosts | less``\
+	crtl-Z to go out
+
+### templates
+
+``$ mkdir roles/my-role/templates``
+ 
+``$ mkdir roles/my-roles/defaults``
+
+``$ cd roles/my-roles/defaults/``
+
+``$ nano main.yml``
+
+##### Add the following to main.yml
+###################
+
+	---
+	server_name: Cats!
+####################
+
+
+``$ cd roles/my-role/templates``
+
+``$ nano test.ini.j2``
+
+###### add the following
+ ###################
+
+	[example]
+	server_name = {{ server_name }}
+	listen = {{ ansible_default_ipv4.address }}
+####################
+
+``$ cd roles/my-role/tasks``\
+``$ nano main.yml``
+
+###### add the following  in main.yml
+################################
+ - name: Template the configuration file\
+  template:\
+    src: test.ini.j2\
+    dest: /tmp/test.ini\
+#############################
+	
+	
+``$ ansible-playbook -i my-hosts playbook.yml``\
+note, activate command in intro directionary
+
+``$ mkdir group_vars in root``
+``$ nano group_vars/my_hosts.yml``
+
+###### add the following in my_host.yml
+#######\
+	---\
+	server_name: Dogs!\
+########## 
+
+``$ ansible-playbook -i my-host playbook.yml --check --diff``
+
+### get ansible galaxy
+
+``$ ansible-galaxy install -p roles/ geerlingguy.git``\
+``$ nano playbook.yml in intro``
+
+###### add this at the bottem of  my-roles/defaults
+	geerlingguy.git
+###### add this under  hosts: my_hosts
+	become : true
+	
+ ``$ run the laybook again``
+ 
+ 
+ ## installing Galaxy with ansible
+ 
+ On VM in Surfsara, install that it will be 2 VCPU
+ 
+ ``$ sudo apt isntall python3``
+ 
+make sure the following is okay
+- ansible version is >=2.7
+- VM has a publis DSN name, we will also set ip an SSL certificates
+- python3 is installed
+- you have an inventory file with the VM or host specifiec where you will deploy galaxy
+
+
+``$ mkdir galaxy``\
+``$ cd galaxy``
+
+``$ nano requirements.yml``
+###### add the following to requirements.yml\
+note the lil dots are supposed to be "-", it is just markdown messing with you
+
+########################
+- src: galaxyproject.galaxy
+  version: 0.9.5
+- src: galaxyproject.nginx
+  version: 0.6.4
+- src: galaxyproject.postgresql
+  version: 1.0.2
+- src: natefoo.postgresql_objects
+  version: 1.1
+- src: geerlingguy.pip
+  version: 1.3.0
+- src: uchida.miniconda
+  version: 0.3.0
+- src: usegalaxy_eu.galaxy_systemd
+  version: 0.1.2
+- src: usegalaxy_eu.certbot
+  version: 0.1.3\
+  
+ ###########################
+ 
+ ``$ ansible-galaxy install -p roles -r requirements.yml``\
+ ``$ nano ansible.cfg``
+ 
+ 
+###### add the following to ansible.cfg
+####################\
+  [defaults]\
+interpreter_python = /usr/bin/python3\
+inventory = hosts\
+retry_files_enabled = false\
+ [ssh_connection]\
+pipelining = true\
+######################
+
+``$ cp ~/intro/my-hosts ./``\
+``$ nano my-hosts``
+###### add the following to my-hosts
+#########################\
+  [galaxyservers]\
+training-0.example.org ansible_connection=local\
+########################
+
+
+##### database installeren PostgreSQL
+
+	$ nano group_vars/galaxyservers.yml	
+
+###### add the following to galaxyservers.yml
+please see markdown code for the right documentation becouse it gets FOO uped.
+###################################################################
+
+# python 3 support
+pip_virtualenv_command: /usr/bin/python3 -m virtualenv # usegalaxy_eu.certbot, usegalaxy_eu.tiaas2, galaxyproject.galaxy
+certbot_virtualenv_package_name: python3-virtualenv    # usegalaxy_eu.certbot
+>pip_package: python3-pip                               # geerlingguy.pip
+
+# postgresql
+postgresql_objects_users:
+  - name: galaxy
+postgresql_objects_databases:
+  - name: galaxy
+    owner: galaxy
+
+``$ nano galaxy.yml`` 
+---
+- hosts: galaxyservers
+  become: true
+  pre_tasks:
+    - name: install dependencies
+      package:
+        name: 'python3-psycopg2'
+  roles:
+    - galaxyproject.postgresql
+    - role: natefoo.postgresql_objects
+      become: true
+      become_user: postgres\
+	  
+####################################################################
+
+``$ mv ansible.cfg group_vars``\
+``$ ansible-playbook galaxy.yml``
+
+##### check of postgres
+``$ /etc/postgresql``\
+``$ sudo -iu postgress``\
+``$ psql galaxy (will be empty becouse it is not installed yet``
+
+\du \l
+
+## installing galaxy
+### sources
+https://training.galaxyproject.org/training-material/topics/admin/tutorials/ansible-galaxy/tutorial.html#installing-galaxy
+https://www.reddit.com/r/ansible/
+https://stackoverflow.com/questions/37878067/ansible-provided-hosts-list-is-empty
+
+### change the followng
+- changing database connection
+- configuration the admin user list
+- changing the "brand" 
+ 
+``$ nano galaxy.yml``
+###### add the following at pretaks and roles
+######################################\
+  pre-tasks [ git, make, virtualenv]\
+ roles: geerlingguy.pip , galaxyproject.galaxy, uchida.miniconda\
+ #######################################
+
+
+it should look like the following, but markdown FOO this up so please check the code\
+################################################################\
+	---
+- hosts: galaxyservers
+  become: true
+  pre_tasks:
+    - name: Install Dependencies
+      package:
+        name: ['git', 'make', 'python3-psycopg2', 'virtualenv']
+  roles:
+    - galaxyproject.postgresql
+    - role: natefoo.postgresql_objects
+      become: true
+      become_user: postgres
+    - geerlingguy.pip
+    - galaxyproject.galaxy
+    - role: uchida.miniconda
+      become: true
+      become_user: galaxy\
+	  
+################################################################\
+
+``$ nano group_vars/galaxyserver.yml``
+
+##### set the following varoiable on set galaxy config
+once again markdown foo this up so check the code\
+#########################################
+
+galaxy_config:
+	galaxy:
+		key: value
+		
+galaxy_create_user: true
+galaxy_sepearate_privileges: true
+galaxy_manage_paths: true
+galaxy_layout: root-dir
+galaxy_root: /srv/galaxy
+galaxy_user: {name: galaxy, shell: /bin/bash}
+galaxy_config_style: yaml
+galaxy_force_checkout: true
+miniconda_prefix: {{ galaxy_tool_dependency_dir }}/_conda
+miniconda_version: 4.6.14
+
+galaxy_config:
+  galaxy:
+  ...
+  uwsgi:
+    http: 0.0.0.0:8080
+    buffer-size: 16384
+    processes: 1
+    threads: 4
+    offload-threads: 2
+    static-map:
+      - /static/style={{ galaxy_server_dir }}/static/style/blue
+      - /static={{ galaxy_server_dir }}/static
+      - /favicon.ico={{ galaxy_server_dir }}/static/favicon.ico
+    static-safe: client/galaxy/images
+    master: true
+    virtualenv: "{{ galaxy_venv_dir }}"
+    pythonpath: "{{ galaxy_server_dir }}/lib"
+    module: galaxy.webapps.galaxy.buildapp:uwsgi_app()
+    thunder-lock: true
+    die-on-term: true
+    hook-master-start:
+      - unix_signal:2 gracefully_kill_them_all
+      - unix_signal:15 gracefully_kill_them_all
+    py-call-osafterfork: true
+    enable-threads: true
+    mule:
+      - lib/galaxy/main.py
+      - lib/galaxy/main.py
+    farm: job-handlers:1,2
+
+### Templated variables (like admin user)
+admin_users: {email1,email2,email3243653y983489}
+brand: Avans
+database_connection: (postgresql:///galaxy?host=/var/run/postgresql) #### is zwaar mogelijk fout
+file_path: ~/galaxy/data #### nodig voor later data storage aan te passen
+check_migrate_tools: false
+tool_data_path: /tool-data
+
+####################################################################3
+
+
+---------------------------------------------------------------------------------------------------------
+
+## Standard errors and how to solve them
+
+#### error message
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+SHA256:I1DqcvtetCqoQp7z8tHWmZjYariA7MzUHYHZC1PFRls.
+Please contact your system administrator.
+Add correct host key in /c/Users/DVrin/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /c/Users/DVrin/.ssh/known_hosts:2
+ECDSA host key for 145.100.58.160 has changed and you have requested strict checking.
+Host key verification failed.
+
+##### how to solve
+"nano .ssh/known_hosts
+"Remove all entries"
+
+#### error message
+
+File "/tmp/galaxy-virtualenv-mBUbpV/virtualenv-16.7.9/virtualenv.py", line 24, in <module>
+    import distutils.spawn
+ModuleNotFoundError: No module named 'distutils.spawn'
+
+
+##### how to solve
+
+sudo apt install python3-distutils -y and run again
+
+################
+# check of galay een schoone python interpreter gebruikt
+sudo apt install python-pip
+virtualenv --no-site-packages galaxy_env
+. ./galaxy_env/bin/activate
+sh run.sh
+
+
+##############
+
+Failed to restart proftpd.service: The name org.freedesktop.PolicyKit1 was not provided by any .service files
+
+solved by: installing sudo apt install policykit-1
+
+
+
+
+######## FTP
+createuser: could not connect to database postgres: FATAL:  role "ubuntu" does not exist
+sudo -u postgres -i
