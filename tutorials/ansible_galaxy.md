@@ -158,22 +158,22 @@ add the folowing to requirements.yml
 ``nano requirements.yml``
 
 
-"- src: galaxyproject.galaxy
-  version: 0.9.5
-- src: galaxyproject.nginx
-  version: 0.6.4
-- src: galaxyproject.postgresql
-  version: 1.0.2
-- src: natefoo.postgresql_objects
-  version: 1.1
-- src:  geerlingguy.pip
-  version: 1.3.0
-- src: uchida.miniconda
-  version: 0.3.0
-- src: usegalaxy_eu.galaxy_systemd
-  version: 0.1.2
-- src: usegalaxy_eu.certbot
-  version: 0.1.3\"
+	- src: galaxyproject.galaxy
+  	version: 0.9.5
+	- src: galaxyproject.nginx
+  	version: 0.6.4
+	- src: galaxyproject.postgresql
+	  version: 1.0.2
+	- src: natefoo.postgresql_objects
+	  version: 1.1
+	- src:  geerlingguy.pip
+	  version: 1.3.0
+	- src: uchida.miniconda
+	  version: 0.3.0
+	- src: usegalaxy_eu.galaxy_systemd
+	  version: 0.1.2
+	- src: usegalaxy_eu.certbot
+	  version: 0.1.3\
   
 
  install the roles
