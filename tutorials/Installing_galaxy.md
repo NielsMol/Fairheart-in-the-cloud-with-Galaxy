@@ -12,7 +12,7 @@
     pre-tasks [ git, make, virtualenv]\
     roles: geerlingguy.pip , galaxyproject.galaxy, uchida.miniconda\
 
-it should look like the following:\
+it should look like the following:
 
     ---
   	- hosts: galaxyservers
@@ -36,7 +36,7 @@ it should look like the following:\
 edit the galaxyserver.yml:\
 `` nano group_vars/galaxyserver.yml``
 
-set the following varoiable on set galaxy config:\
+set the following variable on set galaxy config:
 
 
 	  galaxy_config:
@@ -84,7 +84,7 @@ set the following varoiable on set galaxy config:\
 		- lib/galaxy/main.py
 	      farm: job-handlers:1,2
 
-#### Templated variables (like admin user)
+Templated variables (like admin user):\
     admin_users: {email1,email2,email3243653y983489}
     brand: Avans
     database_connection: (postgresql:///galaxy?host=/var/run/postgresql) #### is zwaar mogelijk fout
