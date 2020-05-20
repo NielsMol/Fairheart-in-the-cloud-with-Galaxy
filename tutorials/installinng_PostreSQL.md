@@ -44,3 +44,11 @@ check of postgres:\
 `` psql galaxy`` (will be empty becouse it is not installed yet
 
 \du \l
+
+
+### sources
+
+https://training.galaxyproject.org/training-material/topics/admin/tutorials/ansible-galaxy/tutorial.html#postgresql
+
+Helena Rasche, Nate Coraor, Simon Gladman, Saskia Hiltemann, Nicola Soranzo, 2020 Galaxy Installation with Ansible (Galaxy Training Materials). /training-material/topics/admin/tutorials/ansible-galaxy/tutorial.html Online; accessed Wed May 20 2020 
+Batut et al., 2018 Community-Driven Data Analysis Training for Biology Cell Systems 10.1016/j.cels.2018.05.012
