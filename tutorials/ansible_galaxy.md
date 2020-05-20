@@ -219,6 +219,7 @@ The server layout should look like this:\
 
 
 ### Sources
+
 @misc{admin-ansible,
     author = "Helena Rasche and Saskia Hiltemann",
     title = "Ansible (Galaxy Training Materials)",
@@ -241,5 +242,6 @@ The server layout should look like this:\
         title = {Community-Driven Data Analysis Training for Biology},
         journal = {Cell Systems}
 }
+
 https://training.galaxyproject.org/training-material/topics/admin/tutorials/ansible/tutorial.html#your-first-playbook-and-first-role               
 https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
