@@ -37,7 +37,7 @@ add the following to ``main.yml``:
 `` nano test.txt``
 
 
-add the following to ``test.txt``
+add the following to ``test.txt``:
 
 
 	"hello Galaxy"
@@ -89,7 +89,7 @@ Edit the test.ini.js file:
 
 `` nano test.ini.j2``
 
-add the following to ``test.ini.j2`` :\
+add the following to ``test.ini.j2`` :
 
 
 	[example]
@@ -97,27 +97,28 @@ add the following to ``test.ini.j2`` :\
 	listen = {{ ansible_default_ipv4.address }}
 
 
-`` cd roles/my-role/tasks``
+`` cd roles/my-role/tasks``\
 `` nano main.yml``
 
-add the following  in ``main.yml``:\
+add the following  in ``main.yml``:
 
- 	- name: Template the configuration file\
- 	 template:\
-   	 src: test.ini.j2\
+ 	- name: Template the configuration file
+ 	 template:
+   	 src: test.ini.j2
    	 dest: /tmp/test.ini
 
 	
 	
 `` ansible-playbook -i my-hosts playbook.yml``\
-note, activate command in intro directionary
+*note, activate command in intro directionary
 
-`` mkdir group_vars in root``
+edit the playbook and my hosts\
+`` mkdir group_vars in root``\
 `` nano group_vars/my_hosts.yml``
 
- add the following in ``my_host.yml``:
-		---
-		server_name: Dogs!
+ add the following in ``my_host.yml``:\
+	---
+	server_name: Dogs!
 
 
 
@@ -126,12 +127,13 @@ note, activate command in intro directionary
 ### get ansible galaxy
 here is where the magic happens of the galaxy
 
-`` ansible-galaxy install -p roles/ geerlingguy.git``
+`` ansible-galaxy install -p roles/ geerlingguy.git``\
 `` nano playbook.yml in intro``
- add this at the bottem of  ``my-roles/defaults``:
-	geerlingguy.git
-add this under  hosts in the file ``my_hosts```:
-	become : true
+
+ add this at the bottem of  ``my-roles/defaults``:\
+		geerlingguy.git\
+add this under  hosts in the file ``my_hosts```:\
+		become : true
 	
 Run the playbook again	
  ``ansible-playbook playbook.yml``
