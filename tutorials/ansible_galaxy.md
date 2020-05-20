@@ -2,12 +2,12 @@
 
 
 
-``$ sudo apt update``\
-``$ sudo apt install software-properties-common``\
-``$ sudo apt-add-repository --yes --update ppa:ansible/ansible``\
-``$ sudo apt install ansible``\
-``$ make deb``\
-``$ mkdir intro || cd intro``
+`` sudo apt update``\
+`` sudo apt install software-properties-common``\
+`` sudo apt-add-repository --yes --update ppa:ansible/ansible``\
+`` sudo apt install ansible``\
+`` make deb``\
+`` mkdir intro || cd intro``
 
 ``$ nano my_hosts``
 
