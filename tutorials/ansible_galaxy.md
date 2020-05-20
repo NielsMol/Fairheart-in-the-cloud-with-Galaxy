@@ -131,9 +131,9 @@ here is where the magic happens of the galaxy
 `` nano playbook.yml in intro``
 
  add this at the bottem of  ``my-roles/defaults``:\
-		geerlingguy.git\
+		``geerlingguy.git``
 add this under  hosts in the file ``my_hosts```:\
-		become : true
+		``become : true``
 	
 Run the playbook again	
  ``ansible-playbook playbook.yml``
@@ -144,10 +144,10 @@ Run the playbook again
  On VM in Surfsara, install that it will be 2 VCPU
  do this on the UI of Surfsara
  
- Install python 3
+ Install python 3\
  `` sudo apt isntall python3``
  
-make sure the following is okay
+make sure the following is okay:
 - ansible version is >=2.7
 - VM has a publis DSN name, we will also set ip an SSL certificates
 - python3 is installed
@@ -158,7 +158,7 @@ make sure the following is okay
 `` cd galaxy``
 
 
-add the folowing to requirements.yml
+add the folowing to requirements.yml\
 ``nano requirements.yml``
 
 
@@ -180,10 +180,10 @@ add the folowing to requirements.yml
 	  version: 0.1.3\
   
 
- install the roles
+ install the roles\
  `` ansible-galaxy install -p roles -r requirements.yml``\
  
- add the following to ansible.cfg
+ add the following to ansible.cfg\
  `` nano ansible.cfg``
  
  
@@ -197,13 +197,13 @@ add the folowing to requirements.yml
 
 
 
-edit my-hosts
+edit my-hosts\
 `` cp ~/intro/my-hosts ./``\
 `` nano my-hosts``
+add the folowing to my-hosts:
 
-
-" [galaxyservers]\
-training-0.example.org ansible_connection=local\"
+ 	[galaxyservers]
+	training-0.example.org ansible_connection=local
 
 The server layout should look like this:\
 ├── ansible.cfg\
