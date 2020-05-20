@@ -19,6 +19,7 @@ add the following to ``galaxyservers.yml`` :
 
 edit ``galaxy.yml`` and add the folowing:\
  ``nano galaxy.yml ``
+ 
       ---
       - hosts: galaxyservers
         become: true
