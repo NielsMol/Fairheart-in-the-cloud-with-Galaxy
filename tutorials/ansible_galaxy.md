@@ -9,7 +9,7 @@
 `` make deb``\
 `` mkdir intro || cd intro``
 
-``$ nano my_hosts``
+`` nano my_hosts``
 
 ###### add the folowing to my_hosts
 
