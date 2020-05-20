@@ -132,7 +132,7 @@ here is where the magic happens of the galaxy
 
  add this at the bottem of  ``my-roles/defaults``:\
 		``geerlingguy.git``
-add this under  hosts in the file ``my_hosts```:\
+add this under  hosts in the file ``my_hosts``:\
 		``become : true``
 	
 Run the playbook again	
