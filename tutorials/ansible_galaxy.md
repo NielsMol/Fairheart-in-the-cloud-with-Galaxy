@@ -11,7 +11,7 @@
 
 `` nano my_hosts``
 
-add the folowing to ``my_hosts``:\
+add the folowing to ``my_hosts``:
 
 
 	[my_hosts]
@@ -20,9 +20,9 @@ add the folowing to ``my_hosts``:\
 preform the following commands to create the proper location of ``main.yml``\
 `` mkdir -p roles/myrole/tasks/``\
 `` cd roles/myrole/tasks/``\
-`` nano main.yml``\
+`` nano main.yml``
 
-add the following to ``main.yml``\:
+add the following to ``main.yml``:
 
 
 	---
@@ -34,19 +34,19 @@ add the following to ``main.yml``\:
 
 `` mkdir roles/my-role/files``\
 `` cd roles/my-role/files``\
-`` nano test.txt``\
+`` nano test.txt``
 
 
-add the following to ``test.txt``\
+add the following to ``test.txt``
 
 
 	"hello Galaxy"
 
-edit the playbook\
+edit the playbook:
 	
-`` nano playbook.yml``\\
+`` nano playbook.yml``
 
-put the following in ``playbook.yml``:\
+put the following in ``playbook.yml``:
 
 
 
@@ -62,12 +62,12 @@ Run playbook
 
 `` ansible-playbook -i my-host playbook.yml``
 
-setting up the module:\
+setting up the module:
 
 ``ansible -i my_host -m setup my_hosts | less``\
 	crtl-Z to go out
 
- Create the templates:\
+ Create the templates:
 
 `` mkdir roles/my-role/templates``
  
@@ -77,13 +77,13 @@ setting up the module:\
 
 `` nano main.yml``
 
- Add the following to ``main.yml``:\
+ Add the following to ``main.yml``:
 
 
 	---
 	server_name: Cats!
 
-Edit the test.ini.js file:\
+Edit the test.ini.js file:
 
 `` cd roles/my-role/templates``
 
@@ -97,7 +97,7 @@ add the following to ``test.ini.j2`` :\
 	listen = {{ ansible_default_ipv4.address }}
 
 
-`` cd roles/my-role/tasks``\
+`` cd roles/my-role/tasks``
 `` nano main.yml``
 
 add the following  in ``main.yml``:\
@@ -105,7 +105,7 @@ add the following  in ``main.yml``:\
  	- name: Template the configuration file\
  	 template:\
    	 src: test.ini.j2\
-   	 dest: /tmp/test.ini\
+   	 dest: /tmp/test.ini
 
 	
 	
@@ -115,9 +115,9 @@ note, activate command in intro directionary
 `` mkdir group_vars in root``
 `` nano group_vars/my_hosts.yml``
 
- add the following in ``my_host.yml``:\
-	---\
-	server_name: Dogs!\
+ add the following in ``my_host.yml``:
+		---
+		server_name: Dogs!
 
 
 
@@ -126,11 +126,11 @@ note, activate command in intro directionary
 ### get ansible galaxy
 here is where the magic happens of the galaxy
 
-`` ansible-galaxy install -p roles/ geerlingguy.git``\
-`` nano playbook.yml in intro``\
- add this at the bottem of  ``my-roles/defaults``:\
+`` ansible-galaxy install -p roles/ geerlingguy.git``
+`` nano playbook.yml in intro``
+ add this at the bottem of  ``my-roles/defaults``:
 	geerlingguy.git
-add this under  hosts in the file ``my_hosts```:\
+add this under  hosts in the file ``my_hosts```:
 	become : true
 	
 Run the playbook again	
