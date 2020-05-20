@@ -10,7 +10,7 @@ add the following to ``galaxyservers.yml`` :
   certbot_virtualenv_package_name: python3-virtualenv    # usegalaxy_eu.certbot
   >pip_package: python3-pip                               # geerlingguy.pip
 
-  # postgresql
+    	# postgresql
   postgresql_objects_users:
     - name: galaxy
   postgresql_objects_databases:
