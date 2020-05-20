@@ -183,12 +183,12 @@ add the folowing to requirements.yml
  `` nano ansible.cfg``
  
  
- " [defaults]\
-interpreter_python = /usr/bin/python3\
-inventory = hosts\
-retry_files_enabled = false\
- [ssh_connection]\
-pipelining = true\ "
+	 [defaults]\
+	interpreter_python = /usr/bin/python3\
+	inventory = hosts\
+	retry_files_enabled = false\
+	 [ssh_connection]\
+	pipelining = true\ 
 
 
 
@@ -201,17 +201,17 @@ edit my-hosts
 " [galaxyservers]\
 training-0.example.org ansible_connection=local\"
 
-.
-├── ansible.cfg
-├── galaxy.yml
-├── group_vars
-│   └── galaxyservers.yml
-├── hosts
-├── requirements.yml
-└── roles
-    ├── galaxyproject.galaxy
-    │   ├── defaults
-    │   │   └── main.yml
+The server layout should look like this:
+├── ansible.cfg\
+├── galaxy.yml\
+├── group_vars\
+│   └── galaxyservers.yml\
+├── hosts\
+├── requirements.yml\
+└── roles\
+    ├── galaxyproject.galaxy\
+    │   ├── defaults\
+    │   │   └── main.yml\
 
 
 ### Sources
