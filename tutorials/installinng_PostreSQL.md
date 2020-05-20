@@ -18,21 +18,21 @@ add the following to ``galaxyservers.yml`` :
         owner: galaxy
 
 edit ``galaxy.yml`` and add the folowing:\
-`` nano galaxy.yml`` 
-  ---
-  - hosts: galaxyservers
-    become: true
-    pre_tasks:
-      - name: install dependencies
-        package:
-          name: 'python3-psycopg2'
-    roles:
-      - galaxyproject.postgresql
-      -role: natefoo.postgresql_objects
+ ``nano galaxy.yml 
+      ---
+      - hosts: galaxyservers
         become: true
-        become_user: postgres\
+      pre_tasks:
+        - name: install dependencies
+          package:
+          name: 'python3-psycopg2'
+      roles:
+        - galaxyproject.postgresql
+        -role: natefoo.postgresql_objects
+          become: true
+          become_user: postgres\
 
-play the playbook ``galaxy.yml``
+play the playbook ``galaxy.yml``\
 `` mv roles group_vars``\
 `` mv ansible.cfg group_vars``\
 `` ansible-playbook galaxy.yml``
