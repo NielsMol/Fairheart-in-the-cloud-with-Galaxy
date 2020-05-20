@@ -61,18 +61,18 @@ Run playbook
 
 ##### setting up the module
 
-``$ansible -i my_host -m setup my_hosts | less``\
+``ansible -i my_host -m setup my_hosts | less``\
 	crtl-Z to go out
 
 ##### templates
 
-``$ mkdir roles/my-role/templates``
+`` mkdir roles/my-role/templates``
  
-``$ mkdir roles/my-roles/defaults``
+`` mkdir roles/my-roles/defaults``
 
-``$ cd roles/my-roles/defaults/``
+`` cd roles/my-roles/defaults/``
 
-``$ nano main.yml``
+`` nano main.yml``
 
 ##### Add the following to main.yml
 
@@ -82,9 +82,9 @@ Run playbook
 
 
 
-``$ cd roles/my-role/templates``
+`` cd roles/my-role/templates``
 
-``$ nano test.ini.j2``
+`` nano test.ini.j2``
 
 ###### add the following
 
@@ -99,10 +99,10 @@ Run playbook
 
 ###### add the following  in main.yml
 
- - name: Template the configuration file\
-  template:\
-    src: test.ini.j2\
-    dest: /tmp/test.ini\
+ 	- name: Template the configuration file\
+ 	 template:\
+   	 src: test.ini.j2\
+   	 dest: /tmp/test.ini\
 
 	
 	
@@ -201,7 +201,7 @@ edit my-hosts
 " [galaxyservers]\
 training-0.example.org ansible_connection=local\"
 
-The server layout should look like this:
+The server layout should look like this:\
 ├── ansible.cfg\
 ├── galaxy.yml\
 ├── group_vars\
