@@ -12,11 +12,11 @@
 ``$ nano my_hosts``
 
 ###### add the folowing to my_hosts
-######################
+
 
 	[my_hosts]
 	localhost ansible_connection=local
-####################
+
 
 ``$ mkdir -p roles/myrole/tasks/``\
 ``$ cd roles/myrole/tasks/``\
