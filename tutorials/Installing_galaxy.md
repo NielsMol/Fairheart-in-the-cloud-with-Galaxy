@@ -101,12 +101,15 @@ Templated variables (like admin user):\
 srv/galaxy/var/config = the tool-shet
 
 
-###### optional lounching uswsig by handlers
 
-sudo -iu galaxy
 
-cd /srv/galaxy/server
-(. ../venv/bin/activate)
+
+##### optional lounching uswsig by handlers
+
+``sudo -iu galaxy``
+
+cd /srv/galaxy/server\
+(. ../venv/bin/activate)\
 uswgi --yaml ../config/galaxy.yml
 
 
