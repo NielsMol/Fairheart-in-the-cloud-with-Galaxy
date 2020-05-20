@@ -6,15 +6,14 @@
 - configuration the admin user list
 - changing the "brand" 
  
-`` nano galaxy.yml``
+`` nano galaxy.yml``\
  add the following at pre-tasks and roles:
 
     pre-tasks [ git, make, virtualenv]\
     roles: geerlingguy.pip , galaxyproject.galaxy, uchida.miniconda\
 
+it should look like the following:\
 
-
-It should look like the following:\
     ---
   	- hosts: galaxyservers
 	    become: true
