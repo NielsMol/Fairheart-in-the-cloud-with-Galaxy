@@ -205,6 +205,8 @@ add the folowing to my-hosts:
  	[galaxyservers]
 	training-0.example.org ansible_connection=local
 
+
+*note: training-0.example.org to your web-url
 The server layout should look like this:\
 ├── ansible.cfg\
 ├── galaxy.yml\
