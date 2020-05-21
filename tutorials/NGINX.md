@@ -1,40 +1,42 @@
 ### NGINX
 
-nano galaxy.yml
-add galaxyprojext.nginx role
+#### note\
+after installing galaxy isnt acfesble anymore by localhost:8080.\
+we figured out that after the part authentication. you can just use the website name: and the the login and password
 
-nano group_vars/galaxyserver.yml
+``nano galaxy.yml``
+add the following role:
+``galaxyprojext.nginx``
+
+``nano group_vars/galaxyserver.yml``
 update the http from 0.0.0.0:8080 to 127.0.0.1:8080
 
--    http: 0.0.0.0:8080
-+    socket: 127.0.0.1:8080
+    -    http: 0.0.0.0:8080
+    +    socket: 127.0.0.1:8080
 
-nano /groupvars/galaxyserver.yml
+``nano /groupvars/galaxyserver.yml``
 
-Add the following
+Add the following to galaxyserver.yml
 
-# Certbot
-certbot_auto_renew_hour: "{{ 23 |random(seed=inventory_hostname)  }}"
-certbot_auto_renew_minute: "{{ 59 |random(seed=inventory_hostname)  }}"
-certbot_auth_method: --webroot
-certbot_install_method: virtualenv
-certbot_auto_renew: yes
-certbot_auto_renew_user: root
-certbot_environment: production 							# was staging before but production server
-certbot_well_known_root: /srv/nginx/_well-known_root
-certbot_share_key_users:
-  - nginx
-certbot_post_renewal: |
-    systemctl restart nginx || true
-certbot_domains:
- - "{{ inventory_hostname }}"
-certbot_agree_tos: --agree-tos
+    # Certbot
+    certbot_auto_renew_hour: "{{ 23 |random(seed=inventory_hostname)  }}"
+    certbot_auto_renew_minute: "{{ 59 |random(seed=inventory_hostname)  }}"
+    certbot_auth_method: --webroot
+    certbot_install_method: virtualenv
+    certbot_auto_renew: yes
+    certbot_auto_renew_user: root
+    certbot_environment: production 							# was staging before but production server
+    certbot_well_known_root: /srv/nginx/_well-known_root
+    certbot_share_key_users:
+      - nginx
+    certbot_post_renewal: |
+        systemctl restart nginx || true
+    certbot_domains:
+    - "{{ inventory_hostname }}"
+    certbot_agree_tos: --agree-tos
+    # NGINX
 
-# NGINX
 
-#### note
-after installing galaxy isnt acfesble anymore by localhost:8080. 
-we figured out that after the part authentication. you can just use the website name: and the the login and password
 
 
 nginx_selinux_allow_local_connections: true
