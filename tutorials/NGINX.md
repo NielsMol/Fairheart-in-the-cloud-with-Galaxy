@@ -34,114 +34,116 @@ Add the following to galaxyserver.yml
     certbot_domains:
     - "{{ inventory_hostname }}"
     certbot_agree_tos: --agree-tos
+    
     # NGINX
+    nginx_selinux_allow_local_connections: true
+    nginx_servers:
+    - redirect-ssl
+    nginx_enable_default_server: false
+    nginx_ssl_servers:
+    - galaxy
+    nginx_conf_http:
+    client_max_body_size: 5g # was 1 gb before but this allows to upload big data of patients until 5 gb
+    nginx_ssl_role: usegalaxy_eu.certbot
+    nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
+    nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-nginx.pem
 
 
+preform the following commands
+``cd galaxyproject.nginx/templates``/
+``mkdir nginx``
+``nano redirect-ssl.j2``
 
+add the following:\
+        
+        server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
 
-nginx_selinux_allow_local_connections: true
-nginx_servers:
-  - redirect-ssl
-nginx_enable_default_server: false
-nginx_ssl_servers:
-  - galaxy
-nginx_conf_http:
-  client_max_body_size: 5g                                    # was 1 gb before but this allows to upload big data of patients until 5 gb
-nginx_ssl_role: usegalaxy_eu.certbot
-nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
-nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-nginx.pem
+        server_name "{{ inventory_hostname }}";
 
-cd galaxyproject.nginx/templates
-mkdir nginx
-nano redirect-ssl.j2
+       location /.well-known/ {
+            root {{ certbot_well_known_root }};
+        }
+
+     location / {
+            return 302 https://$host$request_uri;
+        }
+    }
+
+``nano galaxy.j2``
 
 add the following:
 
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+    server {
+        # Listen on port 443
+        listen        *:443 ssl default_server;
+        # The virtualhost is our domain name
+        server_name   "{{ inventory_hostname }}";
 
-    server_name "{{ inventory_hostname }}";
+        # Our log files will go here.
+        access_log  /var/log/nginx/access.log;
+        error_log   /var/log/nginx/error.log;
 
-    location /.well-known/ {
-        root {{ certbot_well_known_root }};
+        # The most important location block, by default all requests are sent to uWSGI
+        location / {
+            # This is the backend to send the requests to.
+            uwsgi_pass 127.0.0.1:8080;
+            uwsgi_param UWSGI_SCHEME $scheme;
+            include uwsgi_params;
+        }
+
+         # Static files can be more efficiently served by Nginx. Why send the
+         # request to uWSGI which should be spending its time doing more useful
+         # things like serving Galaxy!
+        location /static {
+            alias {{ galaxy_server_dir }}/static;
+            expires 24h;
+        }
+
+       # The style directory is in a slightly different location
+        location /static/style {
+            alias {{ galaxy_server_dir }}/static/style/blue;
+            expires 24h;
+        }
+
+        # In Galaxy instances started with run.sh, many config files are
+        # automatically copied around. The welcome page is one of them. In
+        # production, this step is skipped, so we will manually alias that.
+        location /static/welcome.html {
+            alias {{ galaxy_server_dir }}/static/welcome.html.sample;
+            expires 24h;
+        }
+
+        # serve visualization and interactive environment plugin static content
+        location ~ ^/plugins/(?<plug_type>[^/]+?)/((?<vis_d>[^/_]*)_?)?(?<vis_name>[^/]*?)/static/(?<static_file>.*?)$ {
+            alias {{ galaxy_server_dir }}/config/plugins/$plug_type/;
+            try_files $vis_d/${vis_d}_${vis_name}/static/$static_file
+                      $vis_d/static/$static_file =404;
+        }
+
+        location /robots.txt {
+            alias {{ galaxy_server_dir }}/static/robots.txt;
+        }
+
+        location /favicon.ico {
+            alias {{ galaxy_server_dir }}/static/favicon.ico;
+        }
     }
 
-    location / {
-        return 302 https://$host$request_uri;
-    }
-}
 
-nano galaxy.j2
+#### change the ip to a domain name
 
-add the following:
-server {
-    # Listen on port 443
-    listen        *:443 ssl default_server;
-    # The virtualhost is our domain name
-    server_name   "{{ inventory_hostname }}";
-
-    # Our log files will go here.
-    access_log  /var/log/nginx/access.log;
-    error_log   /var/log/nginx/error.log;
-
-    # The most important location block, by default all requests are sent to uWSGI
-    location / {
-        # This is the backend to send the requests to.
-        uwsgi_pass 127.0.0.1:8080;
-        uwsgi_param UWSGI_SCHEME $scheme;
-        include uwsgi_params;
-    }
-
-    # Static files can be more efficiently served by Nginx. Why send the
-    # request to uWSGI which should be spending its time doing more useful
-    # things like serving Galaxy!
-    location /static {
-        alias {{ galaxy_server_dir }}/static;
-        expires 24h;
-    }
-
-    # The style directory is in a slightly different location
-    location /static/style {
-        alias {{ galaxy_server_dir }}/static/style/blue;
-        expires 24h;
-    }
-
-    # In Galaxy instances started with run.sh, many config files are
-    # automatically copied around. The welcome page is one of them. In
-    # production, this step is skipped, so we will manually alias that.
-    location /static/welcome.html {
-        alias {{ galaxy_server_dir }}/static/welcome.html.sample;
-        expires 24h;
-    }
-
-    # serve visualization and interactive environment plugin static content
-    location ~ ^/plugins/(?<plug_type>[^/]+?)/((?<vis_d>[^/_]*)_?)?(?<vis_name>[^/]*?)/static/(?<static_file>.*?)$ {
-        alias {{ galaxy_server_dir }}/config/plugins/$plug_type/;
-        try_files $vis_d/${vis_d}_${vis_name}/static/$static_file
-                  $vis_d/static/$static_file =404;
-    }
-
-    location /robots.txt {
-        alias {{ galaxy_server_dir }}/static/robots.txt;
-    }
-
-    location /favicon.ico {
-        alias {{ galaxy_server_dir }}/static/favicon.ico;
-    }
-}
-
-
-change the ip to a domain name
-
-nano hosts
+``nano hosts``
 change ip adress to website name, http://fairheartgalaxy.bioinformatics-atgm.nl
 
-Sudo ufw allow 443
-sudo ufw allow 80
 
+open the ports
+``Sudo ufw allow 443``
+``sudo ufw allow 80``
 
-sudo ansible-playbook galaxy.yml
+play the playbook
+``sudo ansible-playbook galaxy.yml``
 
 you should see something like this:
 
