@@ -12,7 +12,7 @@ install ephimerus:
 
 
 #### download the mapping workflow
-wget https://galaxyproject.github.io//training-material/topics/sequence-analysis/tutorials/mapping/workflows/mapping.ga
+``wget https://galaxyproject.github.io//training-material/topics/sequence-analysis/tutorials/mapping/workflows/mapping.ga``
 
 ##### note
 diable external authenthication by adding # before the lines you added. the authenthication prevents the command code to get access (permission deied)
