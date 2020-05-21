@@ -10,6 +10,7 @@ See md or tutorial on how to add a datadisk to the VM
 
 
 
+
 Create and install a datablock referd to previous chapters
 
 edit the galaxyservers.yml in groupvars\
@@ -36,8 +37,8 @@ add the following:
 	<object_store type="hierarchical">
 	    <backends>
 		<backend id="newdata" type="disk" order="0">
-		    <files_dir path="/data2" />
-		    <extra_dir type="job_work" path="/data2/job_work_dir" />
+		    <files_dir path="/mnt/name_datadisk" />
+		    <extra_dir type="job_work" path="/mnt/name_datadisk/job_work_dir" />
 		</backend>
 		<backend id="olddata" type="disk" order="1">
 		    <files_dir path="/data" />
@@ -58,8 +59,8 @@ replace with :
 	<object_store type="distributed">
 	    <backends>
 		<backend id="newdata" type="disk" weight="1">
-		    <files_dir path="/data2"/>
-		    <extra_dir type="job_work" path="/data2/job_work_dir"/>
+		    <files_dir path="/mnt/name_datadisk"/>
+		    <extra_dir type="job_work" path="/mnt/name_datadisk/job_work_dir"/>
 		</backend>
 		<backend id="olddata" type="disk" weight="1">
 		    <files_dir path="/data"/>
