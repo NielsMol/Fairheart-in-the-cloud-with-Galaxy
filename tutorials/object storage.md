@@ -10,6 +10,8 @@ See md or tutorial on how to add a datadisk to the VM\
 later if needed you can upgrade your VM with easy plug and play a brand new big CEPH image\
 just be sure to add it to ``/templates.galaxy/config/object_store_conf.xml`` in the right format
 
+* IMPORTANT *
+
 
 #### installing ditributed Object store hierachical
 
@@ -51,6 +53,8 @@ add the following:
 
 
 
+
+
 #### ditributed Object store to distributed
 
 nano templates/galaxy/config/object_store_conf.xml
@@ -70,6 +74,8 @@ replace with :
 		</backend>
 	    </backends>
 	</object_store>
+
+
 
 
 ####  S3 object store
