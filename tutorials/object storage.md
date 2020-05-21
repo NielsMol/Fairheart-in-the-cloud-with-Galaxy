@@ -10,7 +10,12 @@ See md or tutorial on how to add a datadisk to the VM\
 later if needed you can upgrade your VM with easy plug and play a brand new big CEPH image\
 just be sure to add it to ``/templates.galaxy/config/object_store_conf.xml`` in the right format
 
-* IMPORTANT *
+##### IMPORTANT
+be sure to give the ``/mnt/name_datadisk`` all rights with the command: ``sudo chmod a+rwx /mnt``\
+if you dont do this, it seems liks everything is working and going to upload.
+But when you check what happends with the job ``journalctl -f -u galaxy`` 
+You will see that the job handler dont got the rights to do anything (*but he thinks he is done)*
+So the sad lil job will hang somewhere in the void cramping up your little OS image
 
 
 #### installing ditributed Object store hierachical
