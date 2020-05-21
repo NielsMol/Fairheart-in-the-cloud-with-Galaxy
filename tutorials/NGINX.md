@@ -1,6 +1,6 @@
 ### NGINX
 
-##### note
+note\
 after installing galaxy isnt acfesble anymore by localhost:8080.\
 we figured out that after the part authentication. you can just use the website name: and the the login and password
 
@@ -52,7 +52,7 @@ Add the following to galaxyserver.yml
 preform the following commands:\
 ``cd galaxyproject.nginx/templates``\
 ``mkdir nginx``\
-``nano redirect-ssl.j2``\
+``nano redirect-ssl.j2``
 
 add the following:
         
@@ -152,6 +152,7 @@ changed: [galaxy.example.org]
 
 
 
-
+##### sources
+https://docs.galaxyproject.org/en/master/admin/nginx.html\
 
 
