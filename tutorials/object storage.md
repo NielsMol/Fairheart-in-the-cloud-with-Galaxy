@@ -51,7 +51,7 @@ add the following:
 
 
 
-### ditributed Object store 
+#### ditributed Object store to distributed
 
 nano templates/galaxy/config/object_store_conf.xml
 
