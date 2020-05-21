@@ -6,10 +6,12 @@ When you are running galaxy on a VM where is little tiny space on your precious 
 #### note
 Check if mounted CEPH image is under /mnt/name_datadisk\
 change all data2 names to /mnt/name_datadisk\
-See md or tutorial on how to add a datadisk to the VM
+See md or tutorial on how to add a datadisk to the VM\
+later if needed you can upgrade your VM with easy plug and play a brand new big CEPH image\
+just be sure to add it to ``/templates.galaxy/config/object_store_conf.xml`` in the right format
 
 
-
+#### installing ditributed Object store hierachical
 
 Create and install a datablock referd to previous chapters
 
@@ -49,7 +51,7 @@ add the following:
 
 
 
-### ditributed Object store
+### ditributed Object store 
 
 nano templates/galaxy/config/object_store_conf.xml
 
