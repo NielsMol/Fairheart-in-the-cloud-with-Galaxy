@@ -56,7 +56,7 @@ Add the following:
 run the playbook once more
 ``ansible-playbook slurm.yml``
 
-### galaxy and slurm
+#### galaxy and slurm
 
 ``nano group_vars/galaxyserver.yml``
 
