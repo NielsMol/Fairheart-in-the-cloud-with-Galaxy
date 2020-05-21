@@ -1,6 +1,6 @@
 ### NGINX
 
-#### note\
+##### note
 after installing galaxy isnt acfesble anymore by localhost:8080.\
 we figured out that after the part authentication. you can just use the website name: and the the login and password
 
@@ -49,12 +49,12 @@ Add the following to galaxyserver.yml
     nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-nginx.pem
 
 
-preform the following commands
-``cd galaxyproject.nginx/templates``/
-``mkdir nginx``
-``nano redirect-ssl.j2``
+preform the following commands:\
+``cd galaxyproject.nginx/templates``\
+``mkdir nginx``\
+``nano redirect-ssl.j2``\
 
-add the following:\
+add the following:
         
         server {
         listen 80 default_server;
@@ -134,20 +134,20 @@ add the following:
 
 #### change the ip to a domain name
 
-``nano hosts``
+``nano hosts``\
 change ip adress to website name, http://fairheartgalaxy.bioinformatics-atgm.nl
 
 
-open the ports
-``Sudo ufw allow 443``
+open the ports\
+``Sudo ufw allow 443``\
 ``sudo ufw allow 80``
 
-play the playbook
+play the playbook\
 ``sudo ansible-playbook galaxy.yml``
 
 you should see something like this:
 
-RUNNING HANDLER [restart galaxy] ****************************************
+RUNNING HANDLER [restart galaxy] ****************************************\
 changed: [galaxy.example.org]
 
 
