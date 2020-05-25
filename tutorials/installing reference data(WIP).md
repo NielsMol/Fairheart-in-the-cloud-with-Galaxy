@@ -8,7 +8,7 @@ Add this to requirement.yml:
 	- src: galaxyproject.cvmfs
 	  version: 0.2.8
 	  
-install the new requirements:\  
+install the new requirements: \
 ``ansible-galaxy role install -p roles -r requirements.yml``
 
 edit galaxyservers.yml:\
@@ -24,7 +24,7 @@ add the following:
 edit galaxy.yml\
 ``nano galaxy.yml``
 
-add the following to galaxy.yml:\
+add the following to galaxy.yml:
 
 	- hosts: galaxyservers
 	  become: true
@@ -35,7 +35,7 @@ add the following to galaxy.yml:\
 
 
 
-add the following to galaxyservers.yml:
+add the following to galaxyservers.yml:\
 ``nano groupvars/galaxy.yml``
 
 	galaxy_config:
