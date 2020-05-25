@@ -1,8 +1,8 @@
-### reference data with CMFV
+## reference data with CMFV
 
+We install this to make reference genome publicly avaible. so no every user will download their own and occupied unneccesary amount of data.
 
-
-Add this to requirement.yml:
+Add this to requirement.yml:\
 ``nano requirement.yml``
 
 	- src: galaxyproject.cvmfs
