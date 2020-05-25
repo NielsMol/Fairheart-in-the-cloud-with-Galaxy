@@ -1,5 +1,7 @@
 ## Standard errors and how to solve them
 
+### When logging into the clean new VM
+
 #### error message 
 
         @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -21,6 +23,8 @@ fill in the following command in youw own computer (not the linux vm)
 ``"nano .ssh/known_hosts``\
 Then remove all entries
 
+
+### viruantenv 
 #### error message
 
   File "/tmp/galaxy-virtualenv-mBUbpV/virtualenv-16.7.9/virtualenv.py", line 24, in <module>
@@ -39,7 +43,7 @@ Check weither python user a clean interpenter\
 ``sh run.sh``
 
 
-
+### proFTP service dont start
 #### error message
 
   Failed to restart proftpd.service: The name org.freedesktop.PolicyKit1 was not provided by any .service files
@@ -47,6 +51,7 @@ Check weither python user a clean interpenter\
 #### how to solve
 ``sudo apt install policykit-1``
 
+### Database connection fail with createuser
 
 ######## error message
   createuser: could not connect to database postgres: FATAL:  role "ubuntu" does not exist
@@ -54,6 +59,7 @@ Check weither python user a clean interpenter\
 #### how to solve
 ``sudo -u postgres -i``
 
+### galaxy ansible playbook fail at start
 
 #### error message
 
@@ -91,7 +97,7 @@ make sure the directory is like this:
     │       │   ├── defaults
     │       │   │   └── main.yml
     │       │   ├── files
-
+### permission fail in ansible
 
 #### error message
 
@@ -106,6 +112,7 @@ make sure the directory is like this:
 write in the [default]
 allow_world_readable_tmpfiles=true
 
+### bzip fail
 
 #### error message
 
@@ -231,8 +238,10 @@ allow_world_readable_tmpfiles=true
       --mount source=pulsarconf,target=/pulsar/conf \
       apachepulsar/pulsar:2.5.1 \
       bin/pulsar standalone
-  
-### eeror message
+
+### jobs dont upload anymore after changing data storage
+
+#### error message
 found out with the command journalctl -f -u galaxy
 Jobs werent taken up anymore after editing the data storage
 
