@@ -23,7 +23,7 @@
 fill in the following command in youw own computer (not the linux vm) \
 ``"nano .ssh/known_hosts``\
 Then remove all entries
-----------------------------------------------------------------------------------------------------
+
 
 ### viruantenv 
 #### error message
