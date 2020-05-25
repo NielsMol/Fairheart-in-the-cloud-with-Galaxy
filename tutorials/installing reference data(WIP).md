@@ -46,8 +46,7 @@ add the following to galaxyservers.yml:\
 	      - /cvmfs/data.galaxyproject.org/managed/location/tool_data_table_conf.xml
 	      
 play the playbook:
-``ansible-playbook galaxy.yml``\
-
+``ansible-playbook galaxy.yml``
 
 
 #### sources
