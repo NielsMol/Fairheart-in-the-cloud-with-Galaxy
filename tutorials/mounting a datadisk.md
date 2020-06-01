@@ -39,8 +39,8 @@ a created CEPH image of surfsara can be attached by the UI. it is attached but n
 it is then automaticly mounted.
 
 #### check use of images
-``$ sudo su - `` 
-``$ df -h ``
+`` sudo su - `` \
+`` df -h ``\
 
 check if you see your attached datadisk in the list
 
