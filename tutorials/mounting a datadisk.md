@@ -5,15 +5,15 @@ a created CEPH image of surfsara can be attached by the UI. it is attached but n
 
 
 ### make an empty data disk
- - Go to surfsara
- - Images and storage
- - Image create image
- 	- Give it a name
- 	- Type = generic storage datablock
- 	- Datastore = 106: ceptj
- 	- Set to persistant
- 	- Image location = empty disk image
- 	- Size = in mb
+ - Go to surfsara\
+ - Images and storage\
+ - Image create image\
+ 	- Give it a name\
+ 	- Type = generic storage datablock\
+ 	- Datastore = 106: ceptj\
+ 	- Set to persistant\
+ 	- Image location = empty disk image\
+ 	- Size = in mb\
 
 ### Add data disk to the template
 - VMS
@@ -24,12 +24,12 @@ a created CEPH image of surfsara can be attached by the UI. it is attached but n
 	-  Output data image, select created data storage
 	 
 #### Mount data disk to template
- - Log in on server
-  ``sudo su -``
-  `` Mkdir /mnt/galaxy-data``
-  `` Mkfs -t xfs /dev/vdb``
- `` Mount /dev/vdb /mnt/galaxy-data``
-``sudo blkid = lijst van alle data mounts``
+ Log in on server
+ ``sudo su -``
+ `` Mkdir /mnt/galaxy-data``\
+  `` Mkfs -t xfs /dev/vdb``\
+ `` Mount /dev/vdb /mnt/galaxy-data``\
+``sudo blkid = lijst van alle data mounts``\
 		
 ### Automating of mounting data image
 ``nano /etc/fstab``
