@@ -31,7 +31,8 @@ check if the SSH key exist
 ``cat ~/plaats``\
 ``nano /home/gebruiker/.ssh/authorized_keys``
 
-
+add the SSH key from coworkers to the VM in the following document to enable them to login:
+``nano /home/ubuntu/.ssh/authorized_keys``
 
 
 #### Source
