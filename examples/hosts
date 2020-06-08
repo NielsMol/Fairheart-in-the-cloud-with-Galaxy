@@ -1,0 +1,9 @@
+  
+[galaxyservers]
+your-website.nl ansible_connection=local
+
+[pulsarservers]
+012.345.67.891
+
+[monitoring]
+your-website.nl ansible_connection=local
