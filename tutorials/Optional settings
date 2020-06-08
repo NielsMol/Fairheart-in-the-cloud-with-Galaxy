@@ -1,0 +1,4 @@
+#Source
+https://github.com/galaxyproject/galaxy/blob/dev/lib/galaxy/config/sample/galaxy.yml.sample#L1110
+
+in the link you find all optional settings for a ansible galaxy server
