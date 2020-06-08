@@ -1,0 +1,42 @@
+
+---
+- hosts: ["galaxyservers"]
+  become: true
+  pre_tasks:
+    - name: Install Dependencies
+      package:
+        name: ['git', 'make', 'python3-psycopg2', 'virtualenv']
+    - pip:
+        name: passlib
+    - htpasswd:
+        path: /etc/nginx/passwd
+        name: ###############       # Pick a username
+        password:############## # and a password
+        owner: www-data    # nginx on centos
+        group: root
+        mode: 0640
+        # remote_user_logout_href: https://fairheartgalaxy.bioinformatics-atgm.nl/root/login?is_logout$
+        # require_login:
+        # allow_user_creation
+
+  handlers:
+    - name: Restart Galaxy
+      systemd:
+        name: galaxy
+        state: restarted
+  roles:
+    - galaxyproject.postgresql
+    - role: natefoo.postgresql_objects
+      become: true
+      become_user: postgres
+    - geerlingguy.pip
+    - geerlingguy.docker
+   # - atosatto.minio
+    - galaxyproject.galaxy
+    - role: uchida.miniconda
+      become: true
+      become_user: galaxy
+    - usegalaxy_eu.galaxy_systemd
+    - galaxyproject.nginx
+    - galaxyproject.cvmfs
+    - dj-wasabi.telegraf
