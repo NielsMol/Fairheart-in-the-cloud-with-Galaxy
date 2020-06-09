@@ -17,4 +17,4 @@ to create the Ansible galaxy server there are a few things what must be done
 - Install the required software for Galaxy
 - install Galaxy flavours
 
-![alt text](http://url/to/img.png)
+![alt text](https://github.com/NielsMol/Fairheart-in-the-cloud-with-Galaxy/blob/master/Overview%2C%20building%20a%20galaxy%20server.pdf)
